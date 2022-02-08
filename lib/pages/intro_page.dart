@@ -13,8 +13,7 @@ static final String id = "intro_page";
 class _IntroPageState extends State<IntroPage> {
 
   late PageController _pageController;
-  int currentIndex = 0;
-  bool _isVisible = false;
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -36,100 +35,84 @@ class _IntroPageState extends State<IntroPage> {
       backgroundColor: Colors.white,
       body: Stack(
         alignment: Alignment.bottomCenter,
-        children: <Widget>[
-          Container(
-            alignment: Alignment.bottomRight,
-            //padding: EdgeInsets.only(left: 20, bottom: 50, right: 20),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pushReplacementNamed(context, HomePage.id);
-              },
-              child: Visibility(
-                  visible: _isVisible,
-                  child: Text(
-                    "Skip",
-                    style: TextStyle(color: Colors.red, fontSize: 20,),
-                  )),
-            ),
-          ),
+        children: [
           PageView(
+            controller: _pageController,
             onPageChanged: (int page) {
               setState(() {
-                currentIndex = page;
+                _currentIndex = page;
               });
             },
-            //controller: _pageController,
-            children: <Widget>[
+            children: [
               makePage(
-                  reverse: true,
-                  image: 'assets/images/image_1.png',
-                  title: Strings.stepOneTitle,
-                  content: Strings.stepOneContent
+                image: 'assets/images/image_1.png',
+                content: Strings.stepOneContent,
+                title: Strings.stepOneTitle,
               ),
+
               makePage(
-                  reverse: true,
-                  image: 'assets/images/image_2.png',
-                  title: Strings.stepTwoTitle,
-                  content: Strings.stepTwoContent
+                image: 'assets/images/image_2.png',
+                content: Strings.stepTwoContent,
+                title: Strings.stepTwoTitle,
               ),
+
               makePage(
-                  reverse: true,
-                  image: 'assets/images/image_3.png',
-                  title: Strings.stepThreeTitle,
-                  content: Strings.stepThreeContent
+                image: 'assets/images/image_3.png',
+                content: Strings.stepThreeContent,
+                title: Strings.stepThreeTitle,
               ),
             ],
           ),
+
+
           Container(
             margin: EdgeInsets.only(bottom: 60),
+            alignment: Alignment.bottomCenter,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: _buildIndicator(),
             ),
-          )
+          ),
+
+          _skip(),
         ],
       ),
     );
   }
 
-  Widget makePage({image, title, content, reverse = false}) {
-    return Container(
+  Widget _skip() {
+    if(_currentIndex == 2){
+      return Container(
+        margin: EdgeInsets.only(right: 20),
+        height: 85,
+        alignment: Alignment.topRight,
+        child: GestureDetector(
+          onTap: () {
+            Navigator.pushReplacementNamed(context, HomePage.id);
+          },
+          child: Text('Skip', style: TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.w400),),
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
 
-      padding: EdgeInsets.only(left: 50, right: 50, bottom: 60),
+  Widget makePage({image, title, content}) {
+
+    return Container(
+      padding: EdgeInsets.only(left: 50, right: 50),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          !reverse ?
-          Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Image.asset(image),
-              ),
-              SizedBox(height: 30,),
-            ],
-          ) : SizedBox(),
-          Text(title, style: TextStyle(
-              color: Colors.red,
-              fontSize: 30,
-              fontWeight: FontWeight.bold
-          ),),
-          SizedBox(height: 20,),
-          Text(content, textAlign: TextAlign.center, style: TextStyle(
-              color: Colors.grey,
-              fontSize: 20,
-              fontWeight: FontWeight.w400
-          ),),
-          reverse ?
-          Column(
-            children: <Widget>[
-              SizedBox(height: 30,),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Image.asset(image),
-              ),
-            ],
-          ) : SizedBox(),
+        children: [
+          Text(title, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.red),),
+          SizedBox(height: 30,),
+          Text(content, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20, color: Colors.grey),textAlign: TextAlign.center,),
+          SizedBox(height: 10,),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Image.asset(image),
+          ),
         ],
       ),
     );
@@ -139,18 +122,19 @@ class _IntroPageState extends State<IntroPage> {
     return AnimatedContainer(
       duration: Duration(milliseconds: 300),
       height: 6,
-      width: isActive ? 30 : 6,
-      margin: EdgeInsets.only(right: 5),
+      width: isActive ? 30: 6,
+      margin: EdgeInsets.all(3),
       decoration: BoxDecoration(
           color: Colors.red,
-          borderRadius: BorderRadius.circular(5)
+          borderRadius: BorderRadius.circular(3)
       ),
     );
   }
-  List<Widget> _buildIndicator() {
+
+  List<Widget> _buildIndicator(){
     List<Widget> indicators = [];
-    for (int i = 0; i<3; i++) {
-      if (currentIndex == i) {
+    for(int i = 0; i < 3; i++){
+      if(_currentIndex == i) {
         indicators.add(_indicator(true));
       } else {
         indicators.add(_indicator(false));
@@ -158,18 +142,7 @@ class _IntroPageState extends State<IntroPage> {
     }
     return indicators;
   }
-  void textVisibility() {
-    setState(() {
-      if (currentIndex == 1) {
-        _isVisible = true;
-      } else {
-        _isVisible = false;
-      }
-    });
-  }
 }
-
-
 
 
 
